@@ -1,0 +1,22 @@
+# استخدام نسخة بايثون خفيفة وسريعة
+FROM python:3.10-slim
+
+# تحديث نظام السيرفر وتسطيب عملاق المونتاج FFmpeg
+RUN apt-get update && \
+    apt-get install -y ffmpeg && \
+    rm -rf /var/lib/apt/lists/*
+
+# تحديد مجلد العمل داخل السيرفر
+WORKDIR /app
+
+# نسخ ملف المتطلبات أولاً لتسريع عملية البناء
+COPY requirements.txt .
+
+# تسطيب مكتبات البايثون
+RUN pip install --no-cache-dir -r requirements.txt
+
+# نسخ باقي ملفات البوت للسيرفر
+COPY . .
+
+# أمر تشغيل البوت
+CMD ["python", "main.py"]
